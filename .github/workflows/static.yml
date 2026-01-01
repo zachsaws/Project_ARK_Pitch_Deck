@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方舟计划 - Project ARK</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* 自定义动画 - 从 React 代码中提取 */
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+        }
+        
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+            50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+        }
+        .animate-bounce-slow {
+            animation: bounce 3s infinite;
+        }
+
+        /* 隐藏滚动条 */
+        body {
+            overflow: hidden;
+        }
+
+        /* Slide 通用样式 */
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem; /* p-6 */
+            position: relative;
+            z-index: 20;
+            transition: opacity 0.5s;
+        }
+        
+        @media (min-width: 768px) {
+            .slide-container {
+                padding: 3rem; /* md:p-12 */
+            }
+        }
+    </style>
+</head>
+<body class="w-full h-screen bg-[#0B1120] text-slate-100 font-sans selection:bg-orange-500 selection:text-white relative">
+
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-orange-600/10 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <div class="absolute top-0 left-0 w-full p-6 md:p-8 flex justify-between items-center z-30">
+        <div class="font-bold text-xl tracking-wider text-white">
+            方舟<span class="text-orange-500">计划</span>
+        </div>
+        <div class="text-xs font-mono text-slate-500 hidden md:block">
+            专为 6-14 岁极客少年设计
+        </div>
+    </div>
+
+    <div class="relative z-10 w-full h-full max-w-5xl mx-auto flex items-center justify-center" id="slides-wrapper">
+        
+        <div class="slide-container" id="slide-0">
+            <div class="text-center max-w-3xl">
+                <div class="inline-block mb-6 px-4 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-medium animate-fade-in-up">
+                    👋 嘿，爸爸妈妈们
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight">
+                    别再和孩子<br/>
+                    打<span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">屏幕战争</span>了
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-400 mb-12 leading-relaxed">
+                    如果不让玩是“剥夺童年”，给手机是“放任自流”。<br/>
+                    那么，是否存在<span class="text-white font-bold border-b-2 border-orange-500">第三种选择</span>？
+                </p>
+                <button onclick="nextSlide()" class="group bg-orange-500 hover:bg-orange-400 text-white text-lg font-bold py-4 px-10 rounded-full shadow-lg shadow-orange-900/50 transition-all transform hover:scale-105 flex items-center gap-2 mx-auto cursor-pointer">
+                    看看我们的答案 <i data-lucide="chevron-right" class="group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="slide-container hidden" id="slide-1">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">我们懂你的<span class="text-red-400">两难困境</span></h2>
+            
+            <div class="flex flex-col md:flex-row w-full gap-6 md:gap-12 items-center justify-center">
+                <div class="w-full md:w-1/2 bg-slate-900/50 p-8 rounded-3xl border border-slate-700 relative group overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-2xl">📱</span>
+                        <span class="text-red-400 text-sm font-bold uppercase">现状 A</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">给他手机/iPad？</h3>
+                    <ul class="space-y-3 text-slate-400">
+                        <li class="flex gap-2"><i data-lucide="x" class="text-red-500 w-5 h-5"></i> 玩物丧志，沉迷短视频</li>
+                        <li class="flex gap-2"><i data-lucide="x" class="text-red-500 w-5 h-5"></i> 蓝光伤眼，度数狂飙</li>
+                        <li class="flex gap-2"><i data-lucide="x" class="text-red-500 w-5 h-5"></i> 偷偷充值，防不胜防</li>
+                    </ul>
+                </div>
+
+                <div class="text-2xl font-bold text-slate-600">OR</div>
+
+                <div class="w-full md:w-1/2 bg-slate-900/50 p-8 rounded-3xl border border-slate-700 relative group overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-slate-500"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-2xl">📚</span>
+                        <span class="text-slate-400 text-sm font-bold uppercase">现状 B</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">买个学习机？</h3>
+                    <ul class="space-y-3 text-slate-400">
+                        <li class="flex gap-2"><i data-lucide="x" class="text-slate-500 w-5 h-5"></i> 枯燥乏味，这是“电子试卷”</li>
+                        <li class="flex gap-2"><i data-lucide="x" class="text-slate-500 w-5 h-5"></i> 孩子抗拒，买回来就吃灰</li>
+                        <li class="flex gap-2"><i data-lucide="x" class="text-slate-500 w-5 h-5"></i> 毫无乐趣，抹杀好奇心</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="mt-10 text-center text-slate-400 italic">"难道就没有一款既好玩，又让家长放心的产品吗？"</p>
+        </div>
+
+        <div class="slide-container hidden" id="slide-2">
+            <div class="text-center mb-8 relative z-30">
+                <h2 class="text-4xl md:text-6xl font-bold mb-4">有，它叫 <span class="text-orange-500">方舟</span></h2>
+                <p class="text-xl text-slate-300">第一款把“玩”变成“学”的创造力终端。</p>
+            </div>
+
+            <div class="relative w-full max-w-5xl flex flex-col md:block items-center justify-center h-[500px] md:h-[400px]">
+                
+                <div class="relative z-10 bg-slate-800 w-full max-w-[600px] aspect-[16/9] mx-auto rounded-[2rem] md:rounded-[3rem] border-4 md:border-8 border-slate-700 shadow-2xl flex items-center justify-center transform hover:scale-105 transition-transform duration-700">
+                    <div class="w-[92%] h-[88%] bg-[#E8EAE9] rounded-xl md:rounded-2xl overflow-hidden relative shadow-inner flex flex-col">
+                        <div class="h-6 bg-slate-200 flex justify-between items-center px-4 text-[10px] text-slate-500 font-mono">
+                            <span>MindFlow OS</span>
+                            <div class="flex items-center gap-2"><i data-lucide="sun" size="10"></i> <span>护眼模式: ON</span> <i data-lucide="battery" size="10"></i> 98%</div>
+                        </div>
+
+                        <div class="flex-1 flex flex-col items-center justify-center p-4">
+                            <div class="flex items-center gap-2 mb-4 bg-white/50 px-4 py-2 rounded-full border border-slate-300">
+                                <i data-lucide="rocket" class="text-orange-500" size="20"></i>
+                                <span class="text-slate-800 font-bold text-sm">任务：组装推进器</span>
+                            </div>
+                            
+                            <div class="flex flex-col gap-2 w-48">
+                                <div class="bg-blue-500 text-white text-xs p-2 rounded flex items-center gap-2 shadow-sm transform hover:scale-105 transition-transform">
+                                    <div class="w-2 h-2 bg-white/50 rounded-full"></div> 当 [燃料 &gt; 50%]
+                                </div>
+                                <div class="bg-orange-500 text-white text-xs p-2 rounded flex items-center gap-2 ml-4 shadow-sm transform hover:scale-105 transition-transform">
+                                    <div class="w-2 h-2 bg-white/50 rounded-full"></div> 执行 [点火程序]
+                                </div>
+                                <div class="bg-green-500 text-white text-xs p-2 rounded flex items-center gap-2 ml-4 shadow-sm opacity-50">
+                                    <div class="w-2 h-2 bg-white/50 rounded-full"></div> 等待 [3秒]
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-white/40 to-transparent pointer-events-none"></div>
+                    </div>
+
+                    <div class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-slate-700 rounded-full shadow-inner"></div>
+                    <div class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 flex gap-2">
+                        <div class="w-3 h-3 md:w-4 md:h-4 bg-orange-500 rounded-full shadow-lg"></div>
+                        <div class="w-3 h-3 md:w-4 md:h-4 bg-slate-600 rounded-full shadow-lg"></div>
+                    </div>
+                </div>
+
+                <div class="absolute top-0 left-4 md:-left-4 z-20 bg-slate-900/90 backdrop-blur border border-green-500/30 p-3 md:p-4 rounded-xl shadow-xl animate-fade-in-up delay-100 max-w-[160px] md:max-w-xs" style="animation-delay: 100ms;">
+                    <div class="flex items-center gap-2 text-green-400 font-bold mb-1 text-sm md:text-base"><i data-lucide="eye" size="16"></i> 像纸一样护眼</div>
+                    <div class="text-[10px] md:text-xs text-slate-400">RLCD 漫反射屏，0 蓝光</div>
+                </div>
+
+                <div class="absolute bottom-0 right-4 md:-right-4 z-20 bg-slate-900/90 backdrop-blur border border-blue-500/30 p-3 md:p-4 rounded-xl shadow-xl animate-fade-in-up delay-200 max-w-[160px] md:max-w-xs" style="animation-delay: 200ms;">
+                    <div class="flex items-center gap-2 text-blue-400 font-bold mb-1 text-sm md:text-base"><i data-lucide="brain" size="16"></i> AI 伴玩私教</div>
+                    <div class="text-[10px] md:text-xs text-slate-400">引导思考，而不是给答案</div>
+                </div>
+
+                <div class="absolute top-0 right-4 md:right-20 z-20 bg-slate-900/90 backdrop-blur border border-orange-500/30 p-3 md:p-4 rounded-xl shadow-xl animate-fade-in-up delay-300 max-w-[160px] md:max-w-xs" style="animation-delay: 300ms;">
+                    <div class="flex items-center gap-2 text-orange-400 font-bold mb-1 text-sm md:text-base"><i data-lucide="shield-check" size="16"></i> 纯净系统</div>
+                    <div class="text-[10px] md:text-xs text-slate-400">无浏览器，无社交干扰</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-container hidden" id="slide-3">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">不是玩游戏，是<span class="text-orange-500">练脑子</span></h2>
+                <p class="text-xl text-slate-400">我们将全球顶尖的“极客游戏”装进方舟，让孩子在玩耍中掌握硬核技能。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+                <div class="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden hover:border-blue-500 transition-all group">
+                    <div class="h-40 bg-blue-900/20 relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 grid grid-cols-8 grid-rows-8 opacity-20">
+                            <div class="w-full h-full border border-blue-400/20" style="background-image: linear-gradient(to right, rgba(96, 165, 250, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(96, 165, 250, 0.1) 1px, transparent 1px); background-size: 20px 20px;"></div>
+                        </div>
+                        <i data-lucide="brain" size="60" class="text-blue-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">逻辑与工程</h3>
+                        <p class="text-sm text-slate-400 mb-4">通过《异星工厂》和《红石电路》，学会统筹规划、自动化思维和复杂的因果逻辑。</p>
+                        <div class="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-1 rounded inline-block">培养：未来的系统架构师</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden hover:border-green-500 transition-all group">
+                    <div class="h-40 bg-green-900/20 relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute w-20 h-20 rounded-full border-2 border-dashed border-green-500/30 animate-[spin_10s_linear_infinite]"></div>
+                        <i data-lucide="rocket" size="60" class="text-green-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">物理与科学</h3>
+                        <p class="text-sm text-slate-400 mb-4">在《坎巴拉太空计划》里造火箭，在《传送门》里玩转空间。物理公式不再是死记硬背。</p>
+                        <div class="text-xs font-mono text-green-400 bg-green-400/10 px-2 py-1 rounded inline-block">培养：未来的科学家</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden hover:border-purple-500 transition-all group">
+                    <div class="h-40 bg-purple-900/20 relative flex items-center justify-center overflow-hidden">
+                        <i data-lucide="mountain" size="60" class="text-purple-400 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">坚毅与抗挫</h3>
+                        <p class="text-sm text-slate-400 mb-4">每一次 Game Over 都是一次挫折教育。像《蔚蓝》一样，教孩子跌倒 100 次，爬起来 101 次。</p>
+                        <div class="text-xs font-mono text-purple-400 bg-purple-400/10 px-2 py-1 rounded inline-block">培养：内心强大的领袖</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-container hidden" id="slide-4">
+            <div class="flex flex-col md:flex-row items-center gap-12 max-w-6xl">
+                <div class="flex-1 space-y-6">
+                    <div class="inline-block px-4 py-1 bg-blue-500/10 text-blue-400 rounded-full text-sm font-bold border border-blue-500/20">让家长放心的黑科技</div>
+                    <h2 class="text-4xl font-bold leading-tight">他玩不动的时候<br/><span class="text-blue-400">AI 教练</span>会出手</h2>
+                    <p class="text-lg text-slate-400">
+                        担心游戏太难孩子会放弃？<br/>
+                        方舟内置的 AI 视觉系统，能实时看懂孩子遇到了什么困难。
+                    </p>
+                    <div class="bg-slate-800 p-6 rounded-2xl border-l-4 border-blue-500 italic text-slate-300">
+                        "它不会直接告诉孩子答案，而是像苏格拉底一样提问：'你注意到了吗？左边的齿轮好像卡住了。'"
+                    </div>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li class="flex items-center gap-2"><i data-lucide="check" size="16" class="text-blue-500"></i> 保护视力：每 20 分钟强制休息互动</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" size="16" class="text-blue-500"></i> 知识延伸：游戏里的原理，关联现实百科</li>
+                    </ul>
+                </div>
+
+                <div class="flex-1 relative">
+                    <div class="bg-slate-900 rounded-3xl p-6 border border-slate-700 shadow-2xl relative overflow-hidden">
+                        <div class="aspect-video bg-slate-800 rounded-xl relative overflow-hidden mb-4 opacity-50">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-32 h-32 border-4 border-dashed border-slate-600 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                            </div>
+                        </div>
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8">
+                            <div class="bg-blue-900/90 backdrop-blur-xl border border-blue-500/50 p-4 rounded-xl shadow-lg transform translate-y-6 animate-bounce-slow">
+                                <div class="flex gap-3">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center shrink-0">
+                                        <i data-lucide="message-circle" class="text-white" size="20"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-blue-300 font-bold mb-1">AI 思考助手</div>
+                                        <div class="text-sm text-white">"别灰心！试试看，如果用三角形结构支撑这里，桥还会塌吗？"</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-container hidden" id="slide-5">
+            <div class="text-center max-w-3xl mb-12">
+                <h2 class="text-4xl font-bold mb-6">如果你担心<span class="text-green-400">眼睛</span>...</h2>
+                <p class="text-xl text-slate-400">我们比你更在意。这是市面上唯一一款能“在阳光下玩”的游戏机。</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8 w-full max-w-5xl">
+                <div class="flex-1 bg-white text-slate-900 rounded-3xl p-8 flex flex-col items-center text-center shadow-[0_0_50px_rgba(255,255,255,0.1)] relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 bg-yellow-400 text-xs font-bold uppercase tracking-widest">Daylight Mode</div>
+                    <i data-lucide="sun" size="64" class="text-orange-500 mb-6"></i>
+                    <h3 class="text-2xl font-bold mb-2">RLCD 全反射屏</h3>
+                    <p class="text-slate-600">
+                        原理和 Kindle 一样，本身不发光，靠环境光反射。<br/>
+                        <strong>0 蓝光，0 频闪。</strong><br/>
+                        这就是一张会动的“彩纸”。
+                    </p>
+                </div>
+
+                <div class="flex-1 bg-slate-800 rounded-3xl p-8 flex flex-col items-center text-center border border-slate-700">
+                    <div class="mb-6 relative">
+                        <div class="w-16 h-24 bg-slate-700 rounded-lg border-2 border-slate-600"></div>
+                        <div class="absolute -right-4 -bottom-2 w-12 h-12 bg-orange-500 rounded-lg shadow-lg flex items-center justify-center text-white font-bold animate-bounce">
+                            积木
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 text-white">虚实结合接口</h3>
+                    <p class="text-slate-400">
+                        不仅看屏幕，还能连积木。<br/>
+                        把虚拟的代码，变成现实中机械臂的动作。<br/>
+                        <strong>让孩子的手动起来。</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-container hidden" id="slide-6">
+            <div class="max-w-4xl w-full bg-slate-900/50 border border-slate-700 rounded-3xl p-10 md:p-16 text-center">
+                <div class="flex justify-center mb-8">
+                    <i data-lucide="shield-check" size="64" class="text-orange-500"></i>
+                </div>
+                <h2 class="text-3xl md:text-5xl font-bold mb-8">我们的<span class="text-orange-500">“三不”</span>承诺</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-red-500/10 p-2 rounded-full text-red-500 mt-1"><i data-lucide="x" size="20"></i></div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg">不含社交软件</h4>
+                            <p class="text-slate-400 text-sm">没有微信，没有 QQ，没有陌生人聊天。这里是纯净的孤岛。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="bg-red-500/10 p-2 rounded-full text-red-500 mt-1"><i data-lucide="x" size="20"></i></div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg">不含网页浏览器</h4>
+                            <p class="text-slate-400 text-sm">杜绝不良信息。所有的内容都经过我们的人工审核白名单。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="bg-red-500/10 p-2 rounded-full text-red-500 mt-1"><i data-lucide="x" size="20"></i></div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg">绝无诱导充值</h4>
+                            <p class="text-slate-400 text-sm">买断制或订阅制。绝没有“充值 648 变强”的陷阱。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-container hidden" id="slide-7">
+            <div class="text-center relative z-10">
+                <div class="mb-8 flex justify-center">
+                    <i data-lucide="ship" size="80" class="text-orange-500 animate-pulse"></i>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6">给孩子一张<br/>通往未来的船票</h1>
+                <p class="text-xl text-slate-400 mb-12 max-w-2xl mx-auto">
+                    与其在堵截中破坏亲子关系，不如在引导中成就极客少年。<br/>
+                    <strong>方舟计划，现已开启。</strong>
+                </p>
+                
+                <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+                    <button onclick="openModal()" class="bg-orange-500 hover:bg-orange-400 text-white text-xl font-bold py-5 px-12 rounded-full shadow-[0_0_30px_rgba(249,115,22,0.4)] transition-all transform hover:scale-105 flex items-center gap-3 cursor-pointer">
+                        抢先预订 <i data-lucide="arrow-right"></i>
+                    </button>
+                    <div class="text-slate-500 text-sm">
+                        首批限量 1000 台 · 赠送实体编程积木包
+                    </div>
+                </div>
+
+                <div class="mt-8 flex items-center justify-center gap-2 text-slate-500 font-mono text-sm hover:text-slate-400 transition-colors">
+                    <i data-lucide="mail" size="16"></i> 
+                    <span>联系我们: zachsaws@gmail.com</span>
+                </div>
+
+                <div class="mt-12 flex gap-8 justify-center text-slate-600 grayscale hover:grayscale-0 transition-all opacity-50">
+                    <span>STEAM Education Partner</span>
+                    <span>•</span>
+                    <span>Design Award 2025</span>
+                    <span>•</span>
+                    <span>Parents Choice</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="absolute bottom-8 right-8 flex gap-4 z-30">
+        <button id="btn-prev" onclick="prevSlide()" class="p-3 bg-slate-800/50 rounded-full hover:bg-slate-700 disabled:opacity-30 transition-all text-slate-300 backdrop-blur-sm cursor-pointer disabled:cursor-not-allowed">
+            <i data-lucide="chevron-left" size="24"></i>
+        </button>
+        <button id="btn-next" onclick="nextSlide()" class="p-3 bg-orange-500 rounded-full hover:bg-orange-400 disabled:opacity-30 text-white shadow-lg transition-all transform hover:scale-110 cursor-pointer disabled:cursor-not-allowed">
+            <i data-lucide="chevron-right" size="24"></i>
+        </button>
+    </div>
+
+    <div class="absolute bottom-0 left-0 w-full h-1 bg-slate-800">
+        <div id="progress-bar" class="h-full bg-orange-500 transition-all duration-500" style="width: 12.5%;"></div>
+    </div>
+
+    <div id="modal-backdrop" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-md w-full relative shadow-2xl animate-fade-in-up">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white cursor-pointer">
+                <i data-lucide="x" size="24"></i>
+            </button>
+            
+            <div id="modal-form-view">
+                <h3 class="text-2xl font-bold text-white mb-2">加入首批体验官</h3>
+                <p class="text-slate-400 mb-6">留下邮箱，我们将第一时间通知您发售信息，并附赠“实体编程积木包”兑换码。</p>
+                <form onsubmit="handleSubmit(event)" class="space-y-4">
+                    <div>
+                        <input type="email" required placeholder="您的电子邮箱" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors">
+                    </div>
+                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                        提交申请 <i data-lucide="arrow-right" size="18"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div id="modal-success-view" class="hidden text-center py-8">
+                <div class="w-16 h-16 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check" size="32"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">预定成功！</h3>
+                <p class="text-slate-400">感谢您的信任。我们会将最新动态发送至您的邮箱。</p>
+                <button onclick="closeModal()" class="mt-6 text-slate-500 hover:text-white underline underline-offset-4 cursor-pointer">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 状态管理
+        let currentSlide = 0;
+        const totalSlides = 8;
+        const slides = document.querySelectorAll('.slide-container');
+        const progressBar = document.getElementById('progress-bar');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalFormView = document.getElementById('modal-form-view');
+        const modalSuccessView = document.getElementById('modal-success-view');
+
+        // 更新 UI 函数
+        function updateUI() {
+            // 隐藏所有 slide
+            slides.forEach(slide => slide.classList.add('hidden'));
+            
+            // 显示当前 slide
+            const activeSlide = document.getElementById(`slide-${currentSlide}`);
+            if (activeSlide) {
+                activeSlide.classList.remove('hidden');
+                
+                // 重新触发动画 (简单 hack：重置 animation)
+                const animatedElements = activeSlide.querySelectorAll('.animate-fade-in-up');
+                animatedElements.forEach(el => {
+                    el.style.animation = 'none';
+                    el.offsetHeight; /* trigger reflow */
+                    el.style.animation = null;
+                });
+            }
+
+            // 更新进度条
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // 更新按钮状态
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === totalSlides - 1;
+        }
+
+        // 导航函数
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        // 模态框逻辑
+        function openModal() {
+            modalBackdrop.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('hidden');
+            // 重置表单状态 (可选)
+            setTimeout(() => {
+                modalFormView.classList.remove('hidden');
+                modalSuccessView.classList.add('hidden');
+            }, 300);
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            // 模拟 API 请求
+            setTimeout(() => {
+                modalFormView.classList.add('hidden');
+                modalSuccessView.classList.remove('hidden');
+            }, 600);
+        }
+
+        // 键盘导航
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // 初始化
+        updateUI();
+    </script>
+</body>
+</html>
