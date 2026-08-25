@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>方舟 ARK — 儿童护眼学习平板</title>
+<meta name="description" content="方舟 ARK：一台为孩子重新想过的护眼学习平板。RLCD 类纸反射屏护眼，原生 Android / Windows 跑你熟悉的游戏，没有开放浏览器、内容全策展，AI 教练在游戏里把知识讲给孩子听。" />
+<style>
+  :root{
+    --paper:#f6f1e7;--paper-2:#fffdf8;--surface:#fbf6ec;
+    --ink:#2b2620;--ink-soft:#6b6358;--line:#e7ddc9;
+    --sun:#d98a3d;--sun-deep:#b5702a;--growth:#3f7d6e;--growth-deep:#2f6155;--alert:#b5532f;
+    --shadow:0 18px 48px -24px rgba(43,38,32,.35);--radius:22px;--maxw:1120px;
+    --c-math:#3b6ea5;--c-phys:#d98a3d;--c-space:#7a5ba6;--c-code:#2f8a86;
+    --c-sci:#4f8a3a;--c-lang:#b5536f;--c-soc:#b5532f;--c-exec:#5a5db0;
+    --c-hist:#9a6b3f;--c-create:#a8447f;--c-eco:#7d8a2f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,system-ui,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .btn{display:inline-block;font-weight:600;border-radius:999px;padding:11px 22px;font-size:14.5px;transition:transform .15s ease, box-shadow .15s ease;cursor:pointer;border:1px solid transparent;}
+  .btn-primary{background:var(--ink);color:var(--paper-2)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--ink-soft)}
+  .btn-sun{background:var(--sun);color:#fff}
+  .btn-sun:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(246,241,231,.85);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:62px;gap:14px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+  .brand .mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--sun),var(--growth));display:inline-block}
+  .nav-links{display:flex;gap:16px;font-size:13.5px;color:var(--ink-soft);overflow-x:auto;white-space:nowrap}
+  .nav-links a:hover{color:var(--ink)}
+
+  .hero{position:relative;overflow:hidden;padding:74px 0 64px}
+  .hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(900px 420px at 82% -8%, rgba(217,138,61,.16), transparent 60%),radial-gradient(700px 380px at 8% 110%, rgba(63,125,110,.14), transparent 60%);}
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--sun-deep);text-transform:uppercase;margin-bottom:18px}
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--sun)}
+  h1{font-size:clamp(33px,5vw,56px);line-height:1.12;letter-spacing:-.01em;font-weight:800}
+  h1 .accent{color:var(--sun-deep)}
+  .hero p.lead{margin-top:20px;font-size:18px;color:var(--ink-soft);max-width:30em}
+  .hero-cta{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
+  .diff{margin-top:26px;background:var(--paper-2);border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:14px;color:var(--ink-soft);max-width:31em}
+  .diff b{color:var(--ink)}
+  .device-stage{position:relative;display:flex;justify-content:center;align-items:center;min-height:440px}
+  .device{width:280px;filter:drop-shadow(0 30px 50px rgba(43,38,32,.18))}
+  .float{animation:float 6s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  section{position:relative;padding:84px 0}
+  .section-head{max-width:48em;margin-bottom:40px}
+  .kicker{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--growth-deep)}
+  h2{font-size:clamp(25px,3.4vw,38px);line-height:1.18;margin-top:12px;font-weight:800;letter-spacing:-.01em}
+  .section-head p{margin-top:16px;font-size:17px;color:var(--ink-soft)}
+
+  /* positioning band */
+  .posband{background:var(--ink);color:var(--paper);border-radius:28px;padding:48px 46px}
+  .posband .kicker{color:var(--sun)}
+  .posband h2{color:var(--paper)}
+  .posgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:28px}
+  .posgrid .pc{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:24px}
+  .posgrid .pc .h{font-size:16px;font-weight:700;color:#f2ecdf;margin-bottom:8px}
+  .posgrid .pc p{font-size:14px;color:#cdc4b4}
+  .posline{margin-top:26px;font-size:15px;color:#e9e2d4;border-top:1px dashed rgba(255,255,255,.18);padding-top:18px}
+  .posline b{color:var(--sun)}
+
+  /* problem */
+  .problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .pcard{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow)}
+  .pcard .num{font-size:13px;font-weight:700;color:var(--alert);letter-spacing:.08em}
+  .pcard h3{font-size:21px;margin:10px 0 12px;font-weight:700}
+  .pcard p{color:var(--ink-soft);font-size:15.5px}
+
+  /* nature */
+  .nature{background:var(--paper-2);border:1px solid var(--line);border-radius:28px;padding:54px 48px}
+  .nature h2{color:var(--ink)}.nature .kicker{color:var(--growth-deep)}
+  .nature-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:30px}
+  .nature ul{list-style:none;display:grid;gap:16px}
+  .nature li{display:flex;gap:12px;font-size:16px;color:var(--ink)}
+  .nature li svg{flex:0 0 auto;margin-top:3px}
+  .nature .right{border-left:1px solid var(--line);padding-left:34px}
+  .gamechips{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .chip{background:rgba(63,125,110,.1);border:1px solid rgba(63,125,110,.22);border-radius:999px;padding:7px 14px;font-size:14px;color:var(--growth-deep)}
+  .honest-note{margin-top:26px;font-size:14px;color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:18px}
+
+  /* packaging 3-up */
+  .pkg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .pkgc{background:linear-gradient(180deg,var(--surface),var(--paper-2));border:1px solid var(--line);border-radius:20px;padding:30px;position:relative;overflow:hidden}
+  .pkgc .n{font-size:13px;font-weight:800;color:var(--sun-deep);letter-spacing:.08em}
+  .pkgc h4{font-size:21px;font-weight:800;margin:8px 0 10px}
+  .pkgc p{font-size:15px;color:var(--ink-soft)}
+  .pkgc .vs{margin-top:14px;font-size:13px;color:var(--growth-deep);border-top:1px dashed var(--line);padding-top:12px}
+
+  /* rlcd */
+  .rlcd-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:46px;align-items:center}
+  .reflect{width:100%;max-width:380px}
+  .guarantees{display:grid;gap:16px}
+  .g{display:flex;gap:16px;background:var(--paper-2);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .g .ico{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:rgba(63,125,110,.12);display:flex;align-items:center;justify-content:center}
+  .g h4{font-size:16.5px;font-weight:700}.g p{font-size:14.5px;color:var(--ink-soft);margin-top:4px}
+  .caveat{margin-top:22px;border-left:3px solid var(--alert);background:rgba(181,83,47,.07);padding:16px 20px;border-radius:0 12px 12px 0;font-size:14.5px;color:#7a3a23}
+  .caveat b{color:var(--alert)}
+
+  /* framework */
+  .framework{background:linear-gradient(180deg,var(--surface),var(--paper));border:1px solid var(--line);border-radius:28px;padding:50px 46px}
+  .stages{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+  .stage{background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:24px;position:relative;overflow:hidden}
+  .stage .bar{position:absolute;top:0;left:0;right:0;height:5px}
+  .stage.l .bar{background:var(--sun)}.stage.b .bar{background:var(--growth)}.stage.v .bar{background:var(--c-space)}
+  .stage .age{font-size:13px;font-weight:700;color:var(--ink-soft);letter-spacing:.04em}
+  .stage h4{font-size:20px;margin:6px 0 4px;font-weight:800}
+  .stage .tag-en{font-size:12px;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase}
+  .stage .desc{font-size:14px;color:var(--ink-soft);margin-top:12px}
+  .stage .traits{margin-top:14px;display:flex;flex-wrap:wrap;gap:7px}
+  .trait{font-size:12px;background:rgba(43,38,32,.06);border-radius:999px;padding:4px 10px;color:var(--ink-soft)}
+  .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:30px;align-items:center;border-top:1px solid var(--line);padding-top:22px}
+  .legend .lab{font-size:13px;font-weight:700;color:var(--ink-soft)}
+  .legend .subj{display:flex;flex-wrap:wrap;gap:8px}
+  .sl{font-size:12px;padding:4px 11px;border-radius:999px;color:#fff;font-weight:600}
+  .tiers{display:flex;gap:14px;margin-left:auto;font-size:12.5px;color:var(--ink-soft)}
+  .tiers b{color:var(--ink)}
+
+  /* library */
+  .lib-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+  .tab{font-size:14px;font-weight:600;padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink-soft);cursor:pointer;transition:.15s}
+  .tab:hover{border-color:var(--ink-soft)}
+  .tab.active{background:var(--ink);color:var(--paper-2);border-color:var(--ink)}
+  .lib-note{font-size:14px;color:var(--ink-soft);margin-bottom:22px;max-width:54em}
+  .games{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .gcard{background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:0;overflow:hidden;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease}
+  .gcard:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .gcard .cover{height:92px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;color:#fff}
+  .gcard .cover-glyph{font-size:34px;font-weight:700;line-height:1;opacity:.95;text-shadow:0 1px 2px rgba(0,0,0,.15)}
+  .gcard .cover-label{font-size:12.5px;font-weight:700;opacity:.95;background:rgba(255,255,255,.2);padding:4px 11px;border-radius:999px}
+  .gcard .gbody{padding:22px;display:flex;flex-direction:column;flex:1}
+  .gcard .gtop{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .gcard h4{font-size:18px;font-weight:700;line-height:1.3}
+  .gcard .en{font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .tierbadge{flex:0 0 auto;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;color:#fff}
+  .t1{background:var(--growth)}.t2{background:var(--sun)}.t3{background:var(--alert)}
+  .gcard .age{font-size:12.5px;color:var(--ink-soft);margin-top:10px}
+  .gcard .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .gt{font-size:11.5px;padding:3px 9px;border-radius:999px;color:#fff;font-weight:600}
+  .gcard .target{font-size:14px;color:var(--ink-soft);margin-top:12px;flex:1}
+  .gcard .why{font-size:12.5px;color:var(--sun-deep);border-top:1px dashed var(--line);padding-top:10px;margin-top:12px}
+  .lib-hero{margin:6px 0 28px;background:linear-gradient(180deg,#fbf6ec,#f3ead7);border:1px solid var(--line);border-radius:18px;padding:16px 18px;overflow:hidden}
+  .lib-hero svg{display:block;width:100%;height:auto;max-height:220px}
+  .value-note{text-align:center;font-size:14.5px;font-weight:600;color:var(--growth-deep);background:rgba(63,125,110,.08);border:1px solid rgba(63,125,110,.22);border-radius:12px;padding:12px 16px;margin-bottom:22px}
+
+  /* coach */
+  .coach{background:linear-gradient(180deg,var(--surface),var(--paper));border:1px solid var(--line);border-radius:28px;padding:54px 48px}
+  .demo{display:grid;grid-template-columns:.8fr 1.2fr;gap:30px;align-items:center;margin:30px 0;background:var(--ink);border-radius:18px;padding:28px 30px;color:var(--paper)}
+  .demo .scene{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.05em}
+  .demo .bubble{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:18px 20px;font-size:15px;color:#f2ecdf;line-height:1.65}
+  .demo .bubble .who{font-size:12px;color:var(--sun);font-weight:700;margin-bottom:8px}
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .flow .step{background:var(--paper-2);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .flow .step .badge{display:inline-flex;width:30px;height:30px;border-radius:9px;background:var(--sun);color:#fff;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-bottom:10px}
+  .flow .step h4{font-size:16.5px;font-weight:700}.flow .step p{font-size:14px;color:var(--ink-soft);margin-top:6px}
+  .fn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+  .fn{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .fn h5{font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .fn h5 .dot{width:8px;height:8px;border-radius:50%;background:var(--growth)}
+  .fn p{font-size:13.5px;color:var(--ink-soft);margin-top:6px}
+  .tutor-rel{display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:center;margin:30px 0 6px;background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:28px}
+  .tutor-rel h3{font-size:20px;font-weight:800;margin-bottom:10px}
+  .rel-text p{font-size:15px;color:var(--ink-soft);line-height:1.6}
+  .rel-list{list-style:none;margin:14px 0;display:flex;flex-direction:column;gap:10px}
+  .rel-list li{position:relative;padding-left:20px;font-size:15px;color:var(--ink-soft);line-height:1.5}
+  .rel-list .dot{position:absolute;left:0;top:7px;width:9px;height:9px;border-radius:50%;background:var(--sun)}
+  .rel-contrast{font-size:14.5px;color:var(--ink-soft);background:#fbf6ec;border-left:3px solid var(--growth);padding:12px 14px;border-radius:8px;margin-top:8px}
+  .rel-contrast strong{color:var(--ink)}
+  .rel-diagram{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px}
+  .rel-diagram svg{display:block;width:100%;height:auto}
+
+  /* evidence */
+  .evidence{background:var(--ink);color:var(--paper);border-radius:28px;padding:54px 48px}
+  .evidence h2{color:var(--paper)}.evidence .kicker{color:var(--sun)}
+  .refs{display:grid;grid-template-columns:1fr 1fr;gap:14px 30px;margin-top:28px}
+  .ref{display:flex;gap:12px;font-size:13.5px;color:#d9d1c2;border-top:1px solid rgba(255,255,255,.1);padding-top:12px}
+  .ref .yr{flex:0 0 52px;color:var(--sun);font-weight:700}
+  .ref .meta{color:#b6ad9c}
+  .evid-note{margin-top:26px;font-size:13px;color:#a89f8e}
+
+  /* content spine */
+  .spine{text-align:center;padding:64px 0;background:linear-gradient(180deg,var(--paper),var(--surface))}
+  .spine .big{font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.01em}
+  .spine .big .accent{color:var(--sun-deep)}
+  .spine .pillars{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:26px}
+  .spine .pillar{background:var(--paper-2);border:1px solid var(--line);border-radius:999px;padding:10px 20px;font-size:15px;font-weight:600;color:var(--ink)}
+
+  /* trust */
+  .trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .tcard{background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:26px}
+  .tcard .ico{width:42px;height:42px;border-radius:12px;background:rgba(63,125,110,.12);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .tcard h4{font-size:17px;font-weight:700}
+  .tcard p{font-size:14px;color:var(--ink-soft);margin-top:8px}
+
+  /* faq */
+  .faq{display:grid;gap:14px;max-width:56em}
+  .qa{background:var(--paper-2);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+  .qa h4{font-size:16.5px;font-weight:700;display:flex;gap:10px;align-items:flex-start}
+  .qa h4 .q{color:var(--sun-deep);font-weight:800}
+  .qa p{font-size:14.5px;color:var(--ink-soft);margin-top:10px}
+
+  /* specs */
+  .specs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .spec{background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:26px}
+  .spec h4{font-size:14px;color:var(--ink-soft);font-weight:600;letter-spacing:.04em}
+  .spec .val{font-size:20px;font-weight:800;margin-top:8px;letter-spacing:-.01em}
+  .spec .sub{font-size:13.5px;color:var(--ink-soft);margin-top:6px}
+
+  /* CTA */
+  .cta{background:linear-gradient(135deg,var(--sun),var(--sun-deep));color:#fff;border-radius:28px;padding:60px 48px;text-align:center;position:relative;overflow:hidden}
+  .cta h2{color:#fff}.cta p{color:#fff6ea;margin-top:14px;font-size:17px;max-width:38em;margin-left:auto;margin-right:auto}
+  .cta .hero-cta{justify-content:center;margin-top:28px}
+  .cta .btn-primary{background:#fff;color:var(--sun-deep)}
+  .cta .btn-ghost{color:#fff;border-color:rgba(255,255,255,.6)}
+  .badges{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:26px}
+  .badge-i{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600}
+  .tiers-prev{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:640px;margin:34px auto 0;text-align:left}
+  .tp{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:22px}
+  .tp h4{font-size:17px;font-weight:800}
+  .tp .price{font-size:26px;font-weight:800;margin-top:6px}
+  .tp .price small{font-size:14px;font-weight:600;opacity:.85}
+  .tp p{font-size:13.5px;margin-top:8px;color:#fff6ea}
+  .scarcity{margin-top:26px;font-size:14px;font-weight:600;color:#fff}
+
+  /* sticky mobile CTA */
+  .sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(246,241,231,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 16px;display:none;align-items:center;justify-content:space-between;gap:12px}
+  .sticky-cta .t{font-size:14px;font-weight:700}
+  .sticky-cta .btn{padding:10px 20px;font-size:14px}
+
+  footer{padding:48px 0 90px;color:var(--ink-soft);font-size:13.5px}
+  .foot-grid{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:30px}
+  .disclaimer{margin-top:22px;font-size:12.5px;color:#9a9183;line-height:1.6;max-width:64em}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease}
+  .reveal.in-view{opacity:1;transform:none}
+
+  @media (max-width:900px){
+    .hero-grid,.rlcd-grid,.nature-grid,.problem-grid,.refs,.specs,.games,.fn-grid,.flow,.trust-grid,.stages,.tiers-prev,.posgrid,.pkg,.tutor-rel{grid-template-columns:1fr}
+    .nature .right{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:24px}
+    .nav-links{display:none}
+    section{padding:60px 0}
+    .posband,.nature,.coach,.framework,.cta,.spine{padding:40px 22px}
+    .device-stage{min-height:320px}
+    .demo{grid-template-columns:1fr}
+    .legend{flex-direction:column;align-items:flex-start}
+    .tiers{margin-left:0}
+    .sticky-cta{display:flex}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand"><span class="mark"></span>方舟 ARK</div>
+    <nav class="nav-links">
+      <a href="#why">为什么</a><a href="#pos">定位</a><a href="#device">设备</a><a href="#eye">护眼屏</a>
+      <a href="#grade">分级体系</a><a href="#library">游戏库</a><a href="#coach">AI教练</a>
+      <a href="#evidence">证据</a><a href="#trust">信任</a><a href="#faq">问答</a><a href="#specs">参数</a>
+    </nav>
+    <a href="#cta" class="btn btn-primary">预约方舟</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="wrap hero-grid">
+    <div class="reveal in-view">
+      <span class="eyebrow">儿童护眼学习平板</span>
+      <h1>让学习，<br/>像<span class="accent">玩</span>一样上瘾。</h1>
+      <p class="lead">方舟 ARK 是一台儿童护眼学习平板。它用类纸反射屏护眼，跑你熟悉的游戏与应用，没有开放浏览器、内容全策展，还有一位 AI 教练，在孩子玩得正起劲时，把知识悄悄讲给他听。</p>
+      <div class="hero-cta">
+        <a href="#pos" class="btn btn-primary">看它怎么定位</a>
+        <a href="#library" class="btn btn-ghost">策展游戏库</a>
+      </div>
+      <div class="diff">
+        <b>和普通儿童平板（小度 / 讯飞 / 希沃）或一台 iPad 的本质区别：</b>它们是在标准 LCD 上叠学习 App；方舟的护眼是<b>屏幕本身</b>（RLCD 类纸反射，零蓝光发射），内容是教育团队按年龄与学科<b>策展</b>的游戏库，AI 教练在游戏<b>内部</b>教学——而不是另开一个"学习模式"。
+      </div>
+    </div>
+    <div class="device-stage reveal in-view">
+      <svg class="device float" viewBox="0 0 280 400" xmlns="http://www.w3.org/2000/svg" aria-label="方舟 ARK 平板设备">
+        <defs>
+          <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbf6ec"/><stop offset="1" stop-color="#efe6d4"/></linearGradient>
+          <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a342c"/><stop offset="1" stop-color="#241f19"/></linearGradient>
+        </defs>
+        <rect x="30" y="14" width="220" height="372" rx="30" fill="url(#body)"/>
+        <rect x="44" y="28" width="192" height="316" rx="16" fill="url(#screen)"/>
+        <path d="M44 64 Q120 36 236 74 L236 28 Q140 14 44 28 Z" fill="#ffffff" opacity=".35"/>
+        <circle cx="140" cy="40" r="3" fill="#6b6358"/>
+        <g opacity=".82" stroke="#2b2620" stroke-width="2.4" fill="none" stroke-linecap="round">
+          <circle cx="90" cy="150" r="20"/><path d="M70 180 L110 180 M80 180 L80 198 M100 180 L100 198"/>
+          <circle cx="180" cy="148" r="26"/><ellipse cx="180" cy="148" rx="40" ry="14"/>
+          <rect x="150" y="250" width="120" height="40" rx="8"/><path d="M168 270 L260 270 M200 258 L200 282 M232 258 L232 282"/>
+        </g>
+        <text x="140" y="338" text-anchor="middle" font-family="PingFang SC,sans-serif" font-size="15" font-weight="700" fill="#2b2620" opacity=".7">方舟 ARK</text>
+        <circle cx="140" cy="372" r="5" fill="#6b6358"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- POSITIONING (PM) -->
+<section id="pos">
+  <div class="wrap">
+    <div class="posband reveal">
+      <span class="kicker">产品定位 · 产品经理视角</span>
+      <h2>我们把它定义为一台平板，不是一台电脑</h2>
+      <div class="posgrid">
+        <div class="pc"><div class="h">形态 = 平板</div><p>孩子要的是随手拿、放膝上、揣进包、抗造便携的设备；家长买的是"给孩子的平板"，不是"一台电脑"。形态决定它能不能被理解、被带出门、被接受。</p></div>
+        <div class="pc"><div class="h">内核 = 标准系统</div><p>原生 Android / Windows，所以 Factorio、Kerbal、Portal、Celeste 以本来的样子运行，不是阉割版，也不是云串流。能力不打折。</p></div>
+        <div class="pc"><div class="h">关键判断</div><p>形态走平板（好卖、好懂、好带），能力不妥协（真能跑好游戏）。方舟卖的不是"被限制的电脑"，而是"装好了该装的东西的平板"。</p></div>
+      </div>
+      <div class="posline">一句话定位：<b>方舟 ARK —— 一台把"护眼屏 + 策展内容 + AI 教练"在你拿到手之前就装好的儿童学习平板。</b>它解决的是父母的真问题：既想让孩子玩点好的，又怕伤眼、怕乱看、怕白玩。</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">我们为什么做方舟</span>
+      <h2>孩子的问题，从来不是"不爱学"</h2>
+      <p>是屏幕在伤他的眼睛，是课堂把好奇磨成了任务。我们不想再给一块更亮的屏，而是把这两件事，从根上重新想一遍。</p>
+    </div>
+    <div class="problem-grid">
+      <div class="pcard reveal"><span class="num">问题一</span><h3>屏幕在悄悄伤眼</h3><p>背光 LCD / OLED 自带蓝光发射与 PWM 频闪，长时间盯着，视疲劳、眼胀、干涩都来了。更麻烦的是，屏幕时间挤掉了本该在户外的光——而户外光，是少数被研究反复确认能延缓近视发生的事。</p></div>
+      <div class="pcard reveal"><span class="num">问题二</span><h3>孩子讨厌"被学习"</h3><p>当学习等于坐着听讲、做题、排名，好奇就成了成本。可孩子打起游戏来能专注两小时——不是他坐不住，是那件事刚好戳中了脑子本就喜欢的方式：有目标、有反馈、有掌控感。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEVICE -->
+<section id="device">
+  <div class="wrap">
+    <div class="nature reveal">
+      <span class="kicker">设备本质</span>
+      <h2>它是一台平板，但每台都装好了"该装的东西"</h2>
+      <div class="nature-grid">
+        <div>
+          <ul>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3f7d6e" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg>原生 <b>Android / Windows</b>：你熟悉的游戏与应用，本来的样子直接跑。</li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3f7d6e" stroke-width="2"><path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"/></svg>没有开放浏览器：孩子不能自己上网冲浪、乱点链接。</li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3f7d6e" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>内容全策展：每一款游戏、每一个知识点，由教育团队筛选与编排。</li>
+          </ul>
+          <div class="gamechips"><span class="chip">Factorio</span><span class="chip">Kerbal Space Program</span><span class="chip">Portal</span><span class="chip">Celeste</span><span class="chip">…+ 更多策展中</span></div>
+        </div>
+        <div class="right">
+          <h3 style="font-size:20px;color:var(--ink);font-weight:700;margin-bottom:10px">所以版权不是问题</h3>
+          <p style="color:var(--ink-soft);font-size:15.5px">方舟只是一台装着标准系统的平板。这些作品在 Android / Windows 上本就能运行——孩子玩到的是它们原本的样子，而不是我们"授权"来的阉割版。我们要做的，是在它们旁边，把学习这条线接上。</p>
+          <div class="honest-note">没有浏览器，意味着孩子失去的只是"无边界漫游"，得到的却是：所有时间都花在"被相信有益"的内容上。我们更愿意把它说成<b>策展</b>，而不是<b>限制</b>。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGING (Marketing) -->
+<section id="pkg">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">包装策略 · 产品营销视角</span>
+      <h2>三句话，把方舟讲清楚</h2>
+      <p>复杂的产品，包装要能一句话钉进脑子里。我们不给参数，只给三个"真"——这是方舟区别于所有同类平板的包装主轴。</p>
+    </div>
+    <div class="pkg reveal">
+      <div class="pkgc"><div class="n">01</div><h4>护眼是真技术</h4><p>不是贴膜、不是滤蓝光 App，是屏幕本身就是 RLCD 类纸反射屏——零蓝光发射、无频闪。</p><div class="vs">对标：普通儿童平板的 LCD + 软件滤蓝光</div></div>
+      <div class="pkgc"><div class="n">02</div><h4>内容是真策展</h4><p>不是应用商店随便下，是由 AI 教育专家按年龄 × 学科 × 难度，为每一种能力挑出最值得玩的那一款。</p><div class="vs">对标：儿童平板的视频 / 题库内容池</div></div>
+      <div class="pkgc"><div class="n">03</div><h4>教练是真陪练</h4><p>不是另一个答题 App，是 AI 在游戏内部、在最想听的时刻把知识讲给孩子。</p><div class="vs">对标：平板里的"AI 答疑 / 拍照搜题"</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EYE -->
+<section id="eye">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">护眼显示</span>
+      <h2>RLCD 类纸反射屏：把"看屏幕"的伤害，降到最低</h2>
+      <p>方舟用的是反射式液晶（RLCD）。它不自带背光，靠环境光反射成像——像纸一样。这意味着三件对眼睛真正友好的事。</p>
+    </div>
+    <div class="rlcd-grid">
+      <div class="reveal">
+        <svg class="reflect" viewBox="0 0 380 300" xmlns="http://www.w3.org/2000/svg" aria-label="RLCD 反射成像示意">
+          <defs><linearGradient id="amb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe7c2"/><stop offset="1" stop-color="#f3d49a"/></linearGradient></defs>
+          <rect x="0" y="0" width="380" height="300" rx="16" fill="#fffdf8" stroke="#e7ddc9"/>
+          <circle cx="60" cy="60" r="22" fill="#d98a3d"/><text x="60" y="100" text-anchor="middle" font-size="12" fill="#6b6358">环境光</text>
+          <line x1="78" y1="74" x2="190" y2="170" stroke="#d98a3d" stroke-width="3"/><polygon points="190,170 178,166 184,180" fill="#d98a3d"/>
+          <rect x="170" y="150" width="120" height="80" rx="10" fill="url(#amb)" stroke="#b5702a" stroke-width="2"/>
+          <text x="230" y="195" text-anchor="middle" font-size="12" font-weight="700" fill="#7a4a18">RLCD 屏</text>
+          <line x1="250" y1="170" x2="330" y2="80" stroke="#3f7d6e" stroke-width="3"/><polygon points="330,80 318,84 326,96" fill="#3f7d6e"/>
+          <path d="M320 50 q14 14 0 28 q-14 -14 0 -28 Z" fill="#2b2620"/><circle cx="320" cy="64" r="4" fill="#fff"/>
+          <text x="320" y="120" text-anchor="middle" font-size="12" fill="#6b6358">你的眼睛</text>
+          <text x="190" y="270" text-anchor="middle" font-size="12.5" fill="#6b6358">光来自房间，不来自屏幕本身</text>
+        </svg>
+      </div>
+      <div class="reveal">
+        <div class="guarantees">
+          <div class="g"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6155" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><h4>屏幕自身零蓝光发射</h4><p>没有背光，就不产生背光式蓝光。进入眼睛的光，来自房间，不是来自屏。</p></div></div>
+          <div class="g"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6155" stroke-width="2"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></div><div><h4>无背光频闪（PWM flicker）</h4><p>反射屏没有背光源在明灭，对频闪敏感的人，少了一层眼胀与头痛的来源。</p></div></div>
+          <div class="g"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6155" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></div><div><h4>类纸漫反射，久读更轻</h4><p>环境光柔和进入、对比度温和。研究普遍发现，相比 LCD，电子纸/反射屏的视觉疲劳更低。</p></div></div>
+        </div>
+        <div class="caveat"><b>我们说实话的边界：</b>RLCD 能消除"屏幕自己发出的蓝光与频闪"，却<b>不能替代户外光照来预防近视</b>。它把"不得不看屏幕"时的伤害降到最低，而不是把近视风险归零。暗光环境下，方舟会开启前置柔光补亮——所以请尽量在明亮房间里用它。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GRADING -->
+<section id="grade">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">游戏分级体系</span>
+      <h2>不是"随便玩"，是"按年龄、按学科、按训练靶点"玩</h2>
+      <p>我们请教育顾问把 6–14 岁拆成三个发展阶段，再按学科训练轴匹配游戏。同一个孩子，7 岁和 12 岁该玩的东西，本来就该不一样。</p>
+    </div>
+    <div class="framework reveal">
+      <div class="stages">
+        <div class="stage l"><div class="bar"></div><div class="age">6–8 岁</div><h4>启蒙期</h4><div class="tag-en">Lumen</div>
+          <p class="desc">具体运算刚开始成形。要的是即时反馈、短时任务（≤15 分钟）、不依赖文字、动手与模式识别。</p>
+          <div class="traits"><span class="trait">图形化操作</span><span class="trait">语音/图画引导</span><span class="trait">高脚手架</span><span class="trait">模式识别</span></div>
+        </div>
+        <div class="stage b"><div class="bar"></div><div class="age">9–11 岁</div><h4>建构期</h4><div class="tag-en">Builder</div>
+          <p class="desc">逻辑推理冒头，能处理多步系统、读得懂说明、理解因果与规划。scaffolding 可以收一半。</p>
+          <div class="traits"><span class="trait">多步系统</span><span class="trait">文本指令</span><span class="trait">策略规划</span><span class="trait">因果推理</span></div>
+        </div>
+        <div class="stage v"><div class="bar"></div><div class="age">12–14 岁</div><h4>进阶期</h4><div class="tag-en">Voyager</div>
+          <p class="desc">抽象与假设思维上线，能跑复杂模拟、长线策略，也开始面对自我与情绪。给更多自主权。</p>
+          <div class="traits"><span class="trait">抽象思维</span><span class="trait">复杂模拟</span><span class="trait">长线策略</span><span class="trait">自我认知</span></div>
+        </div>
+      </div>
+      <div class="legend">
+        <span class="lab">学科训练轴：</span>
+        <div class="subj">
+          <span class="sl" style="background:var(--c-math)">数学逻辑</span><span class="sl" style="background:var(--c-phys)">物理工程</span>
+          <span class="sl" style="background:var(--c-space)">空间几何</span><span class="sl" style="background:var(--c-code)">编程计算</span>
+          <span class="sl" style="background:var(--c-sci)">科学探究</span><span class="sl" style="background:var(--c-lang)">语言读写</span>
+          <span class="sl" style="background:var(--c-soc)">社会情感</span><span class="sl" style="background:var(--c-exec)">执行功能</span>
+          <span class="sl" style="background:var(--c-hist)">历史公民</span><span class="sl" style="background:var(--c-create)">创造表达</span>
+          <span class="sl" style="background:var(--c-eco)">经济系统</span>
+        </div>
+        <div class="tiers"><span><b>L1</b> 入门</span><span><b>L2</b> 进阶</span><span><b>L3</b> 挑战</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIBRARY -->
+<section id="library">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">策展游戏库 · AI 教育专家选品</span>
+      <h2>不是"应用商店里随便下"，而是为每一种能力，挑出最值得玩的那一款</h2>
+      <p>每一款都由 AI 教育专家策展：按上面的分级体系标注推荐阶段、学科训练轴、训练靶点与难度等级。源头来自 Steam 等成熟游戏平台——我们不做盗版、不魔改，直接以原生 Android / Windows 运行它们本来的版本。点标签切换，看每个阶段孩子到底在练什么。</p>
+    </div>
+    <div class="lib-hero reveal" aria-hidden="true">
+      <svg viewBox="0 0 680 220" width="100%" role="img" aria-label="方舟策展游戏库示意">
+        <defs>
+          <linearGradient id="libTablet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a342c"/><stop offset="1" stop-color="#241f19"/></linearGradient>
+          <radialGradient id="libGlow" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#fbe7c2"/><stop offset="1" stop-color="#f3d49a" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="340" cy="202" rx="150" ry="13" fill="#000" opacity="0.06"/>
+        <rect x="290" y="38" width="100" height="152" rx="14" fill="url(#libTablet)"/>
+        <rect x="300" y="50" width="80" height="120" rx="6" fill="url(#libGlow)"/>
+        <text x="340" y="116" text-anchor="middle" font-size="14" font-weight="800" fill="#3a342c">方舟</text>
+        <circle cx="340" cy="46" r="3" fill="#6b6358"/>
+        <g font-family="Georgia,serif" font-weight="700" text-anchor="middle">
+          <circle cx="120" cy="78" r="26" fill="#3b6ea5"/><text x="120" y="86" font-size="20" fill="#fff">Σ</text>
+          <circle cx="206" cy="150" r="22" fill="#d98a3d"/><text x="206" y="157" font-size="17" fill="#fff">⚛</text>
+          <circle cx="560" cy="78" r="24" fill="#7a5ba6"/><text x="560" y="85" font-size="16" fill="#fff">◧</text>
+          <circle cx="476" cy="150" r="22" fill="#2f8a86"/><text x="476" y="157" font-size="15" fill="#fff">&lt;/&gt;</text>
+          <circle cx="150" cy="38" r="15" fill="#4f8a3a"/><text x="150" y="44" font-size="14" fill="#fff">⚗</text>
+          <circle cx="540" cy="168" r="17" fill="#b5536f"/><text x="540" y="174" font-size="13" fill="#fff">✎</text>
+        </g>
+        <g stroke="#c9bfa8" stroke-width="1.5" stroke-dasharray="3 4" fill="none" opacity="0.85">
+          <path d="M146 76 C 222 68, 268 58, 290 58"/>
+          <path d="M228 148 C 270 140, 284 128, 290 118"/>
+          <path d="M536 78 C 460 68, 404 58, 392 58"/>
+          <path d="M454 150 C 404 142, 364 128, 352 118"/>
+        </g>
+      </svg>
+    </div>
+    <div class="lib-tabs reveal">
+      <button class="tab active" data-f="all">全部</button>
+      <button class="tab" data-f="L">启蒙期 6–8</button>
+      <button class="tab" data-f="B">建构期 9–11</button>
+      <button class="tab" data-f="V">进阶期 12–14</button>
+    </div>
+    <p class="lib-note reveal">说明：下列游戏均为 Steam 等成熟平台在售作品，由 AI 教育专家按年龄 × 学科 × 难度策展，并以原生 Android / Windows 运行其本来版本。年龄分级参考 ESRB / PEGI 及主流家长评测机构；标注为"需家长引导"的作品含成熟主题，建议家长共玩或延后。具体以官方分级与您对孩子的判断为准。</p>
+    <div class="games" id="gameGrid"></div>
+  </div>
+</section>
+
+<!-- COACH -->
+<section id="coach">
+  <div class="wrap">
+    <div class="coach reveal">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="kicker">AI 教练 · AI Tutor</span>
+        <h2>它不抢戏，只在孩子最想听时，把知识递过去</h2>
+        <p>核心动作只有一件：在游戏进行到某个"可教时刻"，AI 教练轻轻插入一个知识点。</p>
+      </div>
+
+      <div class="tutor-rel">
+        <div class="rel-text">
+          <h3>AI Tutor 和游戏，到底是什么关系？</h3>
+          <p>它<strong>不替代游戏，也不把游戏变成习题</strong>。游戏还是那个游戏——孩子照样在玩、在失败、在欢呼。AI Tutor 坐在游戏之上，只做三件事：</p>
+          <ul class="rel-list">
+            <li><span class="dot"></span><strong>看懂玩法</strong>：实时理解孩子此刻在游戏里做什么、卡在哪、离哪个知识点最近。</li>
+            <li><span class="dot"></span><strong>插入知识</strong>：在最合适的一秒，把游戏里的直觉，连回一个真实的世界规律。</li>
+            <li><span class="dot"></span><strong>沉淀掌握度</strong>：把每次游玩变成一次学习事件，悄悄记进成长档案。</li>
+          </ul>
+          <p class="rel-contrast">同样是《坎巴拉太空计划》，在家自己用电脑玩，多半停在"好玩"这一层；有了 AI Tutor，每一次入轨、每一次坠毁，都会被接住、被点破、被记住——<strong>玩还是那个玩，但孩子带走的，多了一层。</strong></p>
+        </div>
+        <div class="rel-diagram" aria-hidden="true">
+          <svg viewBox="0 0 320 230" width="100%" role="img" aria-label="AI Tutor 与游戏的层叠关系">
+            <defs>
+              <linearGradient id="tutTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c45a"/><stop offset="1" stop-color="#e8a93c"/></linearGradient>
+              <linearGradient id="tutBot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa17d"/><stop offset="1" stop-color="#3f7d6e"/></linearGradient>
+            </defs>
+            <rect x="24" y="18" width="272" height="74" rx="16" fill="url(#tutTop)"/>
+            <text x="160" y="44" text-anchor="middle" font-size="15" font-weight="800" fill="#3a2a10">AI Tutor 层</text>
+            <text x="160" y="66" text-anchor="middle" font-size="11" fill="#5a3d12">观察 → 插入知识 → 追踪掌握度</text>
+            <g stroke="#b58a3a" stroke-width="2.5" fill="none">
+              <path d="M110 96 C 110 110, 120 118, 130 126"/>
+              <path d="M210 96 C 210 110, 200 118, 190 126"/>
+            </g>
+            <g fill="#b58a3a">
+              <polygon points="130,126 122,120 136,119"/>
+              <polygon points="190,126 198,120 184,119"/>
+            </g>
+            <rect x="24" y="128" width="272" height="84" rx="16" fill="url(#tutBot)"/>
+            <text x="160" y="158" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">游戏层 · 孩子自由玩</text>
+            <text x="160" y="182" text-anchor="middle" font-size="11" fill="#eafff5">原版游戏照常运行，不魔改、不加广告</text>
+            <text x="160" y="200" text-anchor="middle" font-size="11" fill="#eafff5">孩子照样在玩、在失败、在欢呼</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="scene">场景 · Kerbal Space Program 中，孩子第一次把火箭送进环绕轨道</div>
+        <div class="bubble">
+          <div class="who">方舟 AI 教练</div>
+          看到那条椭圆轨道了吗？火箭没掉下来，也没飞走——是因为你给的速度"刚刚好"：快到能甩开地球引力，又没快到逃离它。这条线的名字叫<strong>第一宇宙速度</strong>。想不想试试，把速度调慢一点，看它怎么落回大气层？
+        </div>
+      </div>
+
+      <div class="flow">
+        <div class="step"><span class="badge">1</span><h4>观察玩法</h4><p>AI 在后台读懂孩子此刻在做什么、卡在哪、离哪个知识点最近。</p></div>
+        <div class="step"><span class="badge">2</span><h4>捕捉可教时刻</h4><p>解谜、失败、追问的那一刻，就是最好的教学窗口。</p></div>
+        <div class="step"><span class="badge">3</span><h4>插入知识 / 脚手架</h4><p>用孩子能懂的话，把直觉连回真实规律，并给一点恰到好处的提示。</p></div>
+        <div class="step"><span class="badge">4</span><h4>追踪掌握度</h4><p>讲完不考，只留个钩子；把这次学习悄悄记进成长档案，下次接着练。</p></div>
+      </div>
+      <p style="margin-top:8px;font-size:15px;color:var(--ink-soft)">除了"游戏内知识注入"，AI 教练还承担一整套教育职能——这也是我们把产品力真正做厚的地方：</p>
+      <div class="fn-grid">
+        <div class="fn"><h5><span class="dot"></span>自适应节奏</h5><p>跟不上的放慢，上手了的加深，难度始终贴在孩子的"最近发展区"。</p></div>
+        <div class="fn"><h5><span class="dot"></span>学习诊断</h5><p>不只会记分，更能找出孩子具体卡在哪个概念，而不是哪道题。</p></div>
+        <div class="fn"><h5><span class="dot"></span>苏格拉底式追问</h5><p>不直接给答案，而是用问题把理解"问"出来，训练思维本身。</p></div>
+        <div class="fn"><h5><span class="dot"></span>间隔复习</h5><p>把游戏里学到的点，过几天再轻轻提起，用遗忘曲线把记忆钉牢。</p></div>
+        <div class="fn"><h5><span class="dot"></span>跨学科连接</h5><p>把游戏里的直觉，连回学校的数学、物理、语文，让"玩"和"学"不再两张皮。</p></div>
+        <div class="fn"><h5><span class="dot"></span>元认知脚手架</h5><p>帮孩子回想"我刚才怎么想通的"，把一次经验变成可迁移的能力。</p></div>
+        <div class="fn"><h5><span class="dot"></span>成长档案</h5><p>认知 / 社交 / 情绪三维度进步，看得见，不只是一串分数。</p></div>
+        <div class="fn"><h5><span class="dot"></span>家长视图</h5><p>你看得到孩子在"学什么"，而不只是"玩了多久"。</p></div>
+        <div class="fn"><h5><span class="dot"></span>追问与答疑</h5><p>孩子随时发问，教练用孩子的话答，遇到边界就诚实地交给大人。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVIDENCE -->
+<section id="evidence">
+  <div class="wrap">
+    <div class="evidence reveal">
+      <span class="kicker">证据链</span>
+      <h2>我们说的每一条，都尽量有文献撑着</h2>
+      <p style="color:#cdc4b4;margin-top:14px;max-width:48em">方舟不是靠感觉做的。下面这些研究，是我们对"护眼""游戏化学习""AI 教练"三块判断的依据——并且我们翻译成了大白话：对孩子的<b style="color:#f2ecdf">实际意味着什么</b>。</p>
+      <div class="refs">
+        <div class="ref"><span class="yr">2019</span><div><b>Ho et al.</b> 儿童近视与户外光系统综述+荟萃分析（13 研究，15,081 名 4–14 岁）：户外光降低近视发生（OR=0.85），眼轴年增长少 0.08 mm。<span class="meta">Int. J. Environ. Res. Public Health · PubMed 31330865</span><br/><i style="color:#cdc4b4">→ 意味着：方舟护眼，但孩子每天仍需要去户外。</i></div></div>
+        <div class="ref"><span class="yr">2013</span><div><b>Benedetto et al.</b> 相比 LCD，电子纸与纸张引发的视觉疲劳显著更低。<span class="meta">Display · 视觉疲劳对照</span><br/><i style="color:#cdc4b4">→ 意味着：反射屏不是营销词，是真的更耐看。</i></div></div>
+        <div class="ref"><span class="yr">2024</span><div><b>Alotaibi</b> 幼儿游戏化学习元分析：认知 g=0.46、参与度 g=0.44、动机 g=0.40。<span class="meta">Frontiers in Psychology · PMC11018941</span><br/><i style="color:#cdc4b4">→ 意味着：玩着学，比坐着听，记忆和动机都更好。</i></div></div>
+        <div class="ref"><span class="yr">2024</span><div><b>Slattery et al.</b> Minecraft Education 随机对照试验：显著提升空间思维。<span class="meta">空间思维 RCT</span><br/><i style="color:#cdc4b4">→ 意味着：建房子、搭世界，练的是学校里少测的空间能力。</i></div></div>
+        <div class="ref"><span class="yr">2018</span><div><b>Yogman et al. (AAP)</b> "游戏的力量"：游戏建构执行功能与亲子联结。<span class="meta">Pediatrics 142(3)</span><br/><i style="color:#cdc4b4">→ 意味着：方舟把"玩"当正事，不是奖励。</i></div></div>
+        <div class="ref"><span class="yr">2014</span><div><b>Ma et al.</b> 智能导学系统元分析（107 效应量，14,321 人）：对比教师授课 g=0.42，对比课本 g=0.57，与人类家教无显著差异。<span class="meta">J. Educ. Psychol. · ERIC EJ1049508</span><br/><i style="color:#cdc4b4">→ 意味着：AI 教练的定位是"家教级陪练"，不是题海。</i></div></div>
+      </div>
+      <p class="evid-note">说明：以上为公开学术文献的归纳，用于支撑产品方向，不构成医学或教育效果的承诺。每个孩子不同，方舟是工具，不是保证。</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT SPINE (IMC) -->
+<section class="spine">
+  <div class="wrap reveal">
+    <div class="big">在方舟上，<span class="accent">玩</span> 就是学。</div>
+    <p style="margin-top:14px;color:var(--ink-soft);font-size:16px;max-width:34em;margin-left:auto;margin-right:auto">这句是方舟所有内容的主轴——官网、短视频、家长信、线下体验，都只讲这一件事的不同切面。</p>
+    <div class="pillars">
+      <span class="pillar">护眼科普</span><span class="pillar">游戏即学习</span><span class="pillar">教练时刻</span>
+      <span class="pillar">家长视角（成长档案）</span><span class="pillar">真实家庭故事</span>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section id="trust">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">信任与隐私</span>
+      <h2>给孩子的设备，先把"安全"说清楚</h2>
+      <p>卖给家长的东西，信任比参数重要。这三条是我们的底线。</p>
+    </div>
+    <div class="trust-grid">
+      <div class="tcard reveal"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6155" stroke-width="2"><path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"/><path d="M9 12l2 2 4-4"/></svg></div><h4>无广告 · 无内购 · 无算法投喂</h4><p>没有开放浏览器，就没有信息流、没有诱购、没有把注意力卖给广告主。孩子的时间只属于他自己。</p></div>
+      <div class="tcard reveal"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6155" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><h4>数据留在本地</h4><p>学习轨迹、成长档案默认保存在设备与您授权的家长账户内。我们不拿孩子的行为数据做画像、不对外出售。</p></div>
+      <div class="tcard reveal"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6155" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h4>家长说了算</h4><p>每日时长、可玩时段、能否联机，都由家长设定。AI 教练遇到边界问题，会诚实地交还给大人，而不是替你做主。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">家长问答</span>
+      <h2>你大概率会问的</h2>
+    </div>
+    <div class="faq">
+      <div class="qa reveal"><h4><span class="q">Q</span> 它到底是一台电脑还是平板？</h4><p>形态上是一台儿童平板——好拿、好带、抗造；内核是标准 Android / Windows，所以能原生运行那些好游戏。我们把它定义为"装好了该装的东西的平板"，而不是一台被限制的电脑。</p></div>
+      <div class="qa reveal"><h4><span class="q">Q</span> 任何屏幕不都伤眼吗？换个设备有什么用？</h4><p>方舟不消除"看屏幕"本身，但移除了两块公认的伤害源：背光蓝光发射与 PWM 频闪（反射屏都没有）。剩下的，是把"不得不看"的时间，换成被策展过、对大脑有益的内容——并请家长保证孩子每天的户外光。</p></div>
+      <div class="qa reveal"><h4><span class="q">Q</span> 那我直接限制 iPad 时间不行吗？</h4><p>能限制时间，但限制不了"时间花在了什么上"。iPad 上孩子大概率刷短视频或玩抽卡手游——那恰恰是被研究反复质疑的部分。方舟的逻辑是：与其靠意志力对抗算法，不如把环境本身设对。</p></div>
+      <div class="qa reveal"><h4><span class="q">Q</span> 孩子只玩游戏、不学怎么办？</h4><p>这就是 AI 教练存在的意义：知识注入发生在游戏内部，不是另开一个"学习模式"。成长档案会显示"今天在 Kerbal 里接触了轨道力学、在 Celeste 里练了韧性"，让您看见学习确实发生。</p></div>
+      <div class="qa reveal"><h4><span class="q">Q</span> 要一直联网吗？能离线吗？</h4><p>游戏与 AI 教练的本地部分支持离线运行；AI 教练的云端能力在联网时更强。多数策展游戏本身无需持续联网。</p></div>
+      <div class="qa reveal"><h4><span class="q">Q</span> 我的孩子 7 岁 / 13 岁，该玩哪些？</h4><p>看上面的「游戏分级体系」：6–8 走启蒙期，9–11 走建构期，12–14 走进阶期。每个阶段都有对应的策展清单。</p></div>
+      <div class="qa reveal"><h4><span class="q">Q</span> 价格与上市时间？</h4><p>方舟仍在预约阶段，正式参数、价格与发售时间以发布为准。留下邮箱，早鸟档开启时您第一批收到。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section id="specs">
+  <div class="wrap">
+    <div class="section-head reveal"><span class="kicker">参数</span><h2>一眼看懂方舟</h2></div>
+    <div class="specs">
+      <div class="spec reveal"><h4>形态</h4><div class="val">便携护眼平板</div><div class="sub">随手拿、放膝上、揣包里，孩子友好的尺寸与握感</div></div>
+      <div class="spec reveal"><h4>显示</h4><div class="val">RLCD 类纸反射屏</div><div class="sub">无背光 · 零蓝光发射 · 无频闪 · 暗光开前置柔光</div></div>
+      <div class="spec reveal"><h4>系统</h4><div class="val">原生 Android / Windows</div><div class="sub">你熟悉的游戏与应用，本来的样子直接跑</div></div>
+      <div class="spec reveal"><h4>浏览器</h4><div class="val">无开放浏览器</div><div class="sub">孩子不能自主上网，内容 100% 策展</div></div>
+      <div class="spec reveal"><h4>AI 教练</h4><div class="val">知识注入 + 9 项职能</div><div class="sub">自适应 · 诊断 · 追问 · 间隔复习 · 家长视图</div></div>
+      <div class="spec reveal"><h4>游戏库</h4><div class="val">AI 策展游戏库</div><div class="sub">按年龄×学科×难度分级，持续扩充</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>把第一台方舟，留给孩子</h2>
+      <p>我们不急着卖。先让你了解它到底是什么、为什么这样设计。留下邮箱，早鸟档开启时，你第一批收到——以及一份我们怎么思考"护眼"与"学习"的长信。</p>
+      <div class="hero-cta">
+        <a href="#cta" class="btn btn-primary">预约早鸟档</a>
+        <a href="#library" class="btn btn-ghost">再看一遍游戏库</a>
+      </div>
+      <div class="badges">
+        <span class="badge-i">无广告 · 无内购</span>
+        <span class="badge-i">数据本地保存</span>
+        <span class="badge-i">家长全程可控</span>
+        <span class="badge-i">30 天无忧试玩*</span>
+      </div>
+      <p class="value-note">买硬件，即拥有整套策展游戏库——单买这些游戏，总价远超硬件本身。</p>
+      <div class="tiers-prev">
+        <div class="tp"><h4>标准版</h4><div class="price">¥? <small>/ 早鸟预约</small></div><p>方舟平板 + 策展游戏库（基础包）+ AI 教练核心职能。</p></div>
+        <div class="tp"><h4>旗舰版</h4><div class="price">¥? <small>/ 早鸟预约</small></div><p>标准版 + 完整策展游戏库 + 9 项 AI 教练职能 + 家长深度视图 + 实体护眼配件。</p></div>
+      </div>
+      <div class="scarcity">*早鸟首发限量名额 · 预约即锁定首发权益与内测资格（具体以正式发布为准）</div>
+    </div>
+  </div>
+</section>
+
+<!-- STICKY MOBILE CTA -->
+<div class="sticky-cta" id="stickyCta">
+  <span class="t">方舟 ARK · 儿童护眼学习平板</span>
+  <a href="#cta" class="btn btn-sun">预约早鸟档</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><div class="brand" style="margin-bottom:8px"><span class="mark"></span>方舟 ARK</div><div>一台为孩子重新想过的护眼学习平板。</div></div>
+      <div style="display:flex;gap:40px;flex-wrap:wrap">
+        <div><a href="#pos">定位</a><br/><a href="#device">设备</a><br/><a href="#eye">护眼屏</a></div>
+        <div><a href="#grade">分级体系</a><br/><a href="#library">游戏库</a><br/><a href="#faq">问答</a></div>
+      </div>
+    </div>
+    <p class="disclaimer">方舟 ARK 为产品概念展示页。本页所述显示特性基于 RLCD（反射式液晶）技术原理与公开文献归纳；所述教育效果引用自同行评议研究，用于说明产品方向，不构成对任何个体结果的承诺。设备具体参数、上市时间与价格以正式发布为准。RLCD 在暗光环境下可读性下降，请在明亮环境中使用并开启前置柔光。本页不含任何医疗建议，儿童视力健康请遵医嘱并保证充足户外时间。游戏分级参考 ESRB / PEGI 及主流家长评测，最终以官方分级与家庭判断为准。"30 天无忧试玩"为规划中的首发权益示意，以正式发布条款为准。</p>
+    <p style="margin-top:14px;color:#b6ad9c">© <span id="yr"></span> 方舟 ARK · 概念展示</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  const SUBJ = {
+    math:"数学逻辑", phys:"物理工程", space:"空间几何", code:"编程计算",
+    sci:"科学探究", lang:"语言读写", soc:"社会情感", exec:"执行功能",
+    hist:"历史公民", create:"创造表达", eco:"经济系统"
+  };
+  const COLOR = {
+    math:"var(--c-math)", phys:"var(--c-phys)", space:"var(--c-space)", code:"var(--c-code)",
+    sci:"var(--c-sci)", lang:"var(--c-lang)", soc:"var(--c-soc)", exec:"var(--c-exec)",
+    hist:"var(--c-hist)", create:"var(--c-create)", eco:"var(--c-eco)"
+  };
+  const GLYPH = {
+    math:"Σ", phys:"⚛", space:"◧", code:"</>", sci:"⚗", lang:"✎",
+    soc:"♥", exec:"⊞", hist:"⏳", create:"✦", eco:"$"
+  };
+  const GAMES = [
+    {n:"Zoombinis",en:"逻辑寻踪",st:"L",age:"7–10",sub:["math","exec"],t:1,target:"分类、模式识别与早期数学思维启蒙。",why:"图形化、零文字依赖，启蒙期逻辑训练首选。"},
+    {n:"Lightbot: Code Hour",en:"灯光机器人",st:"L",age:"8+",sub:["code"],t:1,target:"用关卡理解循环与函数，编程入门。",why:"把代码概念变成按按钮，不识字也能懂。"},
+    {n:"DragonBox 系列",en:"龙箱代数",st:"L",age:"6+",sub:["math"],t:1,target:"把代数方程藏进卡牌玩法，润物无声。",why:"数学焦虑的解药：先玩懂，再命名。"},
+    {n:"Sumaze!",en:"数径",st:"L",age:"7+",sub:["math","exec"],t:1,target:"在迷宫里快速计算、规划路径。",why:"算数与路径规划合二为一。"},
+    {n:"A Short Hike",en:"短线徒步",st:"L",age:"全年龄",sub:["soc","exec"],t:1,target:"温和探索、完成小目标，建立目标感。",why:"不慌不忙，给启蒙期孩子的安全成就感。"},
+    {n:"Fez",en:"菲斯",st:"L",age:"全年龄",sub:["space","math"],t:2,target:"旋转世界解谜，训练空间与模式。",why:"几乎无文字，靠观察与旋转思考。"},
+    {n:"Minecraft",en:"我的世界",st:"L",age:"7–12",sub:["create","phys","code"],t:2,target:"建造、红石电路与系统思维。",why:"创造力的母体，也是工程直觉的起点。"},
+    {n:"Terraria",en:"泰拉瑞亚",st:"L",age:"8+",sub:["create","exec"],t:2,target:"建造、探索与资源管理。",why:"2D 沙盒，上手快、深度足。"},
+    {n:"World of Goo",en:"黏黏世界",st:"L",age:"8+",sub:["phys"],t:2,target:"用结构力学搭高塔，工程思维启蒙。",why:"物理直觉藏在可爱玩法里。"},
+    {n:"Human Resource Machine",en:"人力资源机器",st:"B",age:"10+",sub:["code","exec"],t:2,target:"用可视化指令序列教编程思维。",why:"把'写程序'变成摆流水线，逻辑立刻可见。"},
+    {n:"7 Billion Humans",en:"70亿人类",st:"B",age:"10+",sub:["code","exec"],t:2,target:"并行指令与优化，编程进阶。",why:"HRM 的续作，引入并发概念。"},
+    {n:"Kerbal Space Program",en:"坎巴拉太空计划",st:"B",age:"12+",sub:["phys","sci"],t:3,target:"火箭发射与轨道力学，NASA 也在用。",why:"失败几十次终于入轨——迭代与韧性的最好的课。"},
+    {n:"Poly Bridge 2",en:"聚桥2",st:"B",age:"10+",sub:["phys"],t:2,target:"结构工程：应力、张力的直觉。",why:"把力学变成'别让车掉下去'。"},
+    {n:"Scrap Mechanic",en:"废械师",st:"B",age:"10+",sub:["phys","code","space"],t:2,target:"机械搭建、逻辑门与空间建构。",why:"数字版乐高+引擎+传感器。"},
+    {n:"Portal 2",en:"传送门2",st:"B",age:"10+",sub:["space","phys"],t:2,target:"空间推理、物理与因果。",why:"解谜神作，双人合作还练协作。"},
+    {n:"Into the Breach",en:"陷阵之志",st:"B",age:"10+",sub:["exec"],t:3,target:"回合制战术，规划与预判。",why:"每一步都要想三步，执行功能训练场。"},
+    {n:"Factorio",en:"异星工厂",st:"B",age:"11+",sub:["exec","phys","eco"],t:3,target:"物流、自动化与系统闭环。",why:"把'复杂问题拆成可运转系统'练到极致。"},
+    {n:"Cities: Skylines",en:"城市天际线",st:"B",age:"11+",sub:["eco","hist","exec"],t:3,target:"城市系统、公民与经济运行。",why:"理解'一个决定如何让整座城改变'。"},
+    {n:"80 Days",en:"八十天",st:"B",age:"11+",sub:["lang","hist"],t:2,target:"环游世界的阅读、地理与抉择。",why:"文字量适中，把地理读成冒险。"},
+    {n:"Universe Sandbox",en:"宇宙沙盘",st:"B",age:"10+",sub:["sci","phys"],t:2,target:"引力、天体与宇宙尺度的科学探究。",why:"亲手撞一颗行星，比背书记得牢。"},
+    {n:"Stardew Valley",en:"星露谷",st:"B",age:"全年龄",sub:["eco","soc","exec"],t:2,target:"农耕系统、经济与社区关系。",why:"温柔地教系统思维与生活节奏。"},
+    {n:"Mini Metro",en:"迷你地铁",st:"B",age:"9+",sub:["exec","eco"],t:2,target:"网络规划、优化与取舍。",why:"极简画面，极密的系统决策。"},
+    {n:"Planet Zoo",en:"行星动物园",st:"B",age:"10+",sub:["sci","eco"],t:2,target:"生态、物种与系统经营。",why:"生物学直觉+经营规划。"},
+    {n:"While True: learn()",en:"当学习学会",st:"B",age:"10+",sub:["code"],t:2,target:"以机器学习为主题的编程解谜。",why:"用谜题讲清 AI 是怎么'学'的。"},
+    {n:"Civilization VI",en:"文明6",st:"V",age:"12+",sub:["hist","exec"],t:3,target:"历史、地理、公民与长线规划。",why:"'再来一回合'背后是真正的战略与因果。"},
+    {n:"Opus Magnum",en:"杰作",st:"V",age:"12+",sub:["phys","code"],t:3,target:"炼金机器设计与优化，工程+化学。",why:"Zachtronics 神作，追求'更优解'的执念。"},
+    {n:"Turing Complete",en:"图灵完备",st:"V",age:"12+",sub:["code"],t:3,target:"从零搭建一台计算机，理解逻辑门与二进制。",why:"信息科技竞赛级别的硬核启蒙。"},
+    {n:"Baba Is You",en:"芭芭是你",st:"V",age:"12+",sub:["math","exec"],t:3,target:"改写规则来解题，系统思维与逻辑。",why:"'规则本身可以被改变'——元认知的礼物。"},
+    {n:"The Witness",en:"见证者",st:"V",age:"14+",sub:["space","exec"],t:3,target:"观察、非线性逻辑与耐心。",why:"没有文字，全靠看与想。"},
+    {n:"Return of the Obra Dinn",en:"奥伯拉丁号",st:"V",age:"13+",sub:["lang","exec"],t:3,target:"阅读、推理与逻辑还原真相。",why:"文字+逻辑的高强度脑力体操。"},
+    {n:"Heaven's Vault",en:"天堂之泉",st:"V",age:"13+",sub:["lang","sci"],t:3,target:"破译一门语言，语言学与考古。",why:"把'学一门语言'变成探险。"},
+    {n:"Celeste",en:"蔚蓝",st:"V",age:"12+",sub:["soc"],t:2,target:"一次次登顶，韧性成长心态。",why:"电子游戏里讲'坚持'讲得最好的之一。"},
+    {n:"Gris",en:"格ris",st:"V",age:"12+",sub:["soc","create"],t:2,target:"用艺术与色彩讲情绪与疗愈。",why:"情绪素养的温柔入口。"},
+    {n:"Spiritfarer",en:"灵魂摆渡人",st:"V",age:"12+",sub:["soc"],t:2,target:"面对离别与生命，情感教育。",why:"把'告别'讲得温暖而不沉重。"},
+    {n:"Night in the Woods",en:"林中之夜",st:"V",age:"13+ 需引导",sub:["soc","lang"],t:3,target:"友谊、成年与心理健康，叙事深刻。",why:"PEGI 12 / ESRB T，含成熟主题，建议家长共玩。"},
+    {n:"Rocksmith",en:"摇滚史密斯",st:"V",age:"12+",sub:["create"],t:2,target:"接真实电吉他，真的学会弹。",why:"少数能教会一门真实技艺的游戏。"},
+    {n:"Valiant Hearts",en:"勇敢的心",st:"V",age:"12+",sub:["hist","soc"],t:2,target:"一战历史与人道叙事。",why:"把历史变成可以共情的故事。"},
+    {n:"Outer Wilds",en:"星际拓荒",st:"V",age:"12+",sub:["sci","exec"],t:3,target:"太阳系探索与科学推理，时间循环。",why:"用好奇心驱动的硬核科学冒险。"},
+    {n:"Subnautica",en:"深海迷航",st:"V",age:"12+",sub:["sci","exec"],t:3,target:"海底生存与生态系统探究。",why:"把生物学与压力管理藏进探索。"},
+    {n:"Papers, Please",en:"请出示证件",st:"V",age:"12+",sub:["soc","exec"],t:3,target:"规则、伦理与系统抉择。",why:"在游戏里理解'制度'与'人'的张力。"},
+    {n:"Victoria 3",en:"维多利亚3",st:"V",age:"12+",sub:["hist","eco"],t:3,target:"19世纪经济、人口与政治系统。",why:"把宏观经济学变成可操作的沙盘。"},
+    {n:"Anno 1800",en:"纪元1800",st:"V",age:"12+",sub:["eco","exec"],t:3,target:"产业链、贸易与城市经营。",why:"系统规划与经济因果的练兵场。"},
+    {n:"Don't Starve",en:"饥荒",st:"V",age:"12+",sub:["exec","eco"],t:2,target:"生存、资源与系统管理。",why:"在失败里学会规划与取舍。"},
+    {n:"SpaceChem",en:"空间化学",st:"B",age:"12+",sub:["code","sci"],t:3,target:"用反应器设计解决分子合成。",why:"编程+化学的硬核谜题神作。"},
+    {n:"Shenzhen I/O",en:"深圳I/O",st:"B",age:"12+",sub:["code","phys"],t:3,target:"电路设计与嵌入式工程。",why:"把'做个能用的东西'练到极致。"},
+    {n:"Besiege",en:"围攻",st:"B",age:"12+",sub:["phys","exec"],t:2,target:"中世纪攻城机械搭建。",why:"工程直觉+一点破坏欲的出口。"},
+    {n:"Patrick's Parabox",en:"帕特里克的盒子",st:"B",age:"12+",sub:["math","space"],t:3,target:"改写空间规则的逻辑谜题。",why:"'空间本身可被改变'的烧脑训练。"},
+    {n:"Carto",en:"卡托",st:"B",age:"7+",sub:["space","soc"],t:2,target:"用可拼接地图解谜的温馨冒险。",why:"空间推理裹在好故事里。"},
+    {n:"Dorfromantik",en:"田园小镇",st:"B",age:"全年龄",sub:["space","exec"],t:1,target:"六边形地块拼合的静心经营。",why:"建立秩序感与规划欲的温柔入口。"},
+    {n:"Sokobond",en:"原子推箱",st:"L",age:"全年龄",sub:["sci","math"],t:1,target:"推原子拼化学键的逻辑解谜。",why:"零文字，化学直觉启蒙。"},
+    {n:"Gorogoa",en:"格里亚",st:"L",age:"全年龄",sub:["space","exec"],t:2,target:"拼接图画解谜的极致艺术。",why:"观察与联想力的高级训练。"},
+    {n:"Lumino City",en:"卢米诺城",st:"L",age:"全年龄",sub:["space","exec"],t:2,target:"手工机械谜题的温暖冒险。",why:"机关与空间推理的可爱结合。"}
+  ];
+
+  function render(filter){
+    const grid = document.getElementById('gameGrid');
+    grid.innerHTML = '';
+    GAMES.filter(g=> filter==='all' || g.st===filter).forEach(g=>{
+      const tags = g.sub.map(s=>`<span class="gt" style="background:${COLOR[s]}">${SUBJ[s]}</span>`).join('');
+      const c = COLOR[g.sub[0]];
+      const gl = GLYPH[g.sub[0]];
+      const card = document.createElement('div');
+      card.className = 'gcard';
+      card.innerHTML = `
+        <div class="cover" style="background:${c}">
+          <span class="cover-glyph">${gl}</span>
+          <span class="cover-label">${SUBJ[g.sub[0]]}</span>
+        </div>
+        <div class="gbody">
+          <div class="gtop"><div><h4>${g.n}</h4><div class="en">${g.en}</div></div><span class="tierbadge t${g.t}">L${g.t}</span></div>
+          <div class="age">推荐阶段 ${g.age}</div>
+          <div class="tags">${tags}</div>
+          <div class="target">${g.target}</div>
+          <div class="why">教育专家视角：${g.why}</div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+  render('all');
+  document.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render(btn.dataset.f);
+    });
+  });
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target);} });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
